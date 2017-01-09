@@ -1,0 +1,56 @@
+version: '2'
+services:
+  app:
+    container_name: php56_app
+    build: ./docker/app
+    image: jasonraimondi/app:latest
+    ports:
+      - "8080:80"
+      - "444:443"
+      - "9009:9000"
+    volumes:
+     - ./logs:/var/log
+     - ./logs/nginx:/var/log/nginx
+     - ./application:/var/www/html
+    networks:
+     - appnet
+  mailcatcher:
+    container_name: php56_mailcatcher
+    image: jasonraimondi/mailcatcher:latest
+    ports:
+     - "1081:1080"
+     - "1026:1025"
+    networks:
+     - appnet
+  yarn:
+    container_name: php56_yarn
+    image: jasonraimondi/yarn:latest
+    volumes:
+     - ./application:/var/www/html
+    networks:
+     - appnet
+  redis:
+    container_name: php56_redis
+    image: redis:latest
+    networks:
+     - appnet
+  db:
+    container_name: php56_db
+    image: percona:5.7
+    ports:
+     - "33307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_DATABASE: homestead
+      MYSQL_USER: homestead
+      MYSQL_PASSWORD: secret
+    volumes:
+     - ./data:/var/lib/mysql
+    networks:
+     - appnet
+networks:
+  appnet:
+    driver: "bridge"
+volumes:
+  data:
+    driver: "local"
