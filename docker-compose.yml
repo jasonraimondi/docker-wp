@@ -2,8 +2,8 @@ version: '2'
 services:
   app:
     container_name: wordpress_app
-    build: ./docker/app
-    image: jasonraimondi/app:latest
+    build: ./docker/wordpress
+    image: jasonraimondi/wordpress:latest
     ports:
       - "8080:80"
       - "444:443"
