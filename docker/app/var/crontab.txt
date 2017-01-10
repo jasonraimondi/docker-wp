@@ -1,1 +1,1 @@
-* * * * * echo 'hello world: ' $(date) >> /var/log/hello.txt
+# * * * * * echo 'hello world: ' $(date) >> /var/log/hello.txt

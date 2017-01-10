@@ -1,7 +1,7 @@
 version: '2'
 services:
   app:
-    container_name: php56_app
+    container_name: wordpress_app
     build: ./docker/app
     image: jasonraimondi/app:latest
     ports:
@@ -14,28 +14,8 @@ services:
      - ./application:/var/www/html
     networks:
      - appnet
-  mailcatcher:
-    container_name: php56_mailcatcher
-    image: jasonraimondi/mailcatcher:latest
-    ports:
-     - "1081:1080"
-     - "1026:1025"
-    networks:
-     - appnet
-  yarn:
-    container_name: php56_yarn
-    image: jasonraimondi/yarn:latest
-    volumes:
-     - ./application:/var/www/html
-    networks:
-     - appnet
-  redis:
-    container_name: php56_redis
-    image: redis:latest
-    networks:
-     - appnet
   db:
-    container_name: php56_db
+    container_name: wordpress_db
     image: percona:5.7
     ports:
      - "33307:3306"
@@ -45,7 +25,7 @@ services:
       MYSQL_USER: homestead
       MYSQL_PASSWORD: secret
     volumes:
-     - ./data:/var/lib/mysql
+     - ./database:/var/lib/mysql
     networks:
      - appnet
 networks:

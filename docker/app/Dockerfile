@@ -1,4 +1,4 @@
-FROM php:5.6-fpm
+FROM php:7.0-fpm
 
 MAINTAINER Jason Raimondi <jason@raimondi.us>
 
@@ -13,7 +13,8 @@ RUN apt-key adv --keyserver hkp://pgp.mit.edu:80 --recv-keys 573BFD6B3D8FBC64107
         cron \
         supervisor \
         git \
-        vim
+        vim \
+        openssl
 
 RUN apt-get install -y \
         libfcgi-dev libfcgi0ldbl libjpeg62-turbo-dbg libmcrypt-dev \
@@ -32,12 +33,8 @@ RUN docker-php-ext-install tokenizer \
         mcrypt \
         opcache \
         exif \
-        pdo \
-        pdo_mysql \
+        mysqli \
         zip
-
-# RUN docker-php-ext-configure imap --with-kerberos --with-imap-ssl \
-#     && docker-php-ext-install imap
 
 RUN mkdir -p /usr/include \
     && docker-php-ext-configure gd --with-gd --with-freetype-dir=/usr/include/ --with-png-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
@@ -46,6 +43,15 @@ RUN mkdir -p /usr/include \
 RUN rm -rf /var/lib/apt/lists/* \
     && rm -rf /var/www/html \
     && rm /etc/nginx/conf.d/default.conf  
+
+RUN { \
+		echo 'opcache.memory_consumption=128'; \
+		echo 'opcache.interned_strings_buffer=8'; \
+		echo 'opcache.max_accelerated_files=4000'; \
+		echo 'opcache.revalidate_freq=2'; \
+		echo 'opcache.fast_shutdown=1'; \
+		echo 'opcache.enable_cli=1'; \
+	} > /usr/local/etc/php/conf.d/opcache-recommended.ini
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
 
@@ -58,8 +64,8 @@ RUN chmod 600 /etc/crontab
 COPY ./etc/nginx/nginx.conf /etc/nginx/nginx.conf
 ADD ./etc/nginx/conf.d/ /etc/nginx/conf.d
 
-ADD ./etc/php/fpm/php-fpm.d/ /usr/local/etc/php-fpm.d
-COPY ./etc/php/fpm/php.ini /usr/local/etc/php/php.ini
+# ADD ./etc/php/fpm/php-fpm.d/ /usr/local/etc/php-fpm.d
+# COPY ./etc/php/fpm/php.ini /usr/local/etc/php/php.ini
 
 WORKDIR /var/www/html
 
