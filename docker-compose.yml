@@ -3,7 +3,6 @@ services:
   app:
     container_name: wordpress_app
     build: ./docker/app
-    image: jasonraimondi/wordpress:latest
     ports:
       - "80:80"
       - "443:443"
