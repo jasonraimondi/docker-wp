@@ -44,6 +44,8 @@ RUN rm -rf /var/lib/apt/lists/* \
     && rm -rf /var/www/html \
     && rm /etc/nginx/conf.d/default.conf  
 
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
+
 RUN { \
 		echo 'opcache.memory_consumption=128'; \
 		echo 'opcache.interned_strings_buffer=8'; \
@@ -53,19 +55,10 @@ RUN { \
 		echo 'opcache.enable_cli=1'; \
 	} > /usr/local/etc/php/conf.d/opcache-recommended.ini
 
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin/ --filename=composer
-
 COPY ./etc/supervisord.conf /etc/supervisord.conf
-
-COPY ./var/crontab.txt /var/crontab.txt
-RUN crontab /var/crontab.txt
-RUN chmod 600 /etc/crontab
 
 COPY ./etc/nginx/nginx.conf /etc/nginx/nginx.conf
 ADD ./etc/nginx/conf.d/ /etc/nginx/conf.d
-
-# ADD ./etc/php/fpm/php-fpm.d/ /usr/local/etc/php-fpm.d
-# COPY ./etc/php/fpm/php.ini /usr/local/etc/php/php.ini
 
 WORKDIR /var/www/html
 

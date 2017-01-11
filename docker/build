@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-
-cd docker/wordpress
-docker build -t jasonraimondi/wordpress:$1 -t jasonraimondi/wordpress:latest .
-docker push jasonraimondi/wordpress:$1
-docker push jasonraimondi/wordpress:latest
